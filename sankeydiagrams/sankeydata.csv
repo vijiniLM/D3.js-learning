@@ -1,0 +1,9 @@
+source,target,value
+Applications,Virtual Interview,23
+Applications,Rejected,29
+Virtual Interview,Technical Test,14
+Virtual Interview,Declined,9
+Technical Test,Formal Interview,7
+Technical Test,Failed,7
+Formal Interview,Offer,1
+Formal Interview,No Offer,6

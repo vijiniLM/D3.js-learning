@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <title>D3 sankey project</title>
+</head>
+<body>
+    <h1>D3js- sankey
+
+    </h1>
+    <div id="playground"></div>
+    <div id="imgbox"></div>
+    <script>
+
+let heading="snakey:visualizing flows";
+
+d3.select("#playground")
+    .append("h2")
+    .text(heading);
+
+d3.select("#playground div")
+    .selectAll("li")
+    .data([10, 20, 30])
+    .text(d => d)
+    .enter()
+    .append("li")
+    .text(d => d);
+
+const Width = 1300;
+const Height = 600;
+const margin = { top: 30, right: 30, bottom: 30, left: 30 };
+const width = Width - margin.left - margin.right;
+const height = Height - margin.top - margin.bottom;
+
+const svg = d3.select("#playground")
+    .append("svg")
+    .attr("width", Width)
+    .attr("height", Height)
+    .style('border','2px solid #eee')
+    .style('border-radius','10px')
+    .style('box-shadow','4px 4px 10px rgba(0,0,0,0.2)');
+
+
+
+d3.csv("sankeydata.csv").then(data => {
+
+    const nodes = Array.from
+    (new Set(data.flatMap(d => [d.source, d.target])),
+     id => ({ id }));
+    console.log(nodes);
+
+const links = data.map(d => ({
+    source: d.source,
+    target: d.target,
+    value: +d.value
+}));
+
+
+    console.log(links);
+
+
+
+
+    const nodemap = new Map(nodes.map((d,i) => [d.id, i]));
+    links.forEach(link => {
+        link.source = nodemap.get(link.source);
+        link.target = nodemap.get(link.target);
+    });
+
+        console.log(nodemap);
+
+
+
+const color = d3.scaleOrdinal()
+.domain(nodes.map(d => d.id))
+.range(d3.schemeCategory10);
+
+console.log(color('rejected'));
+
+
+const sankey = d3.sankey()
+    .nodeWidth(20)
+    .nodePadding(55)
+    .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]]);
+
+  const { nodes: sankeyNodes, links: sankeyLinks } = sankey({
+    nodes: nodes.map(d => Object.assign({}, d)),
+    links: links.map(d => Object.assign({}, d))
+  });
+  
+  console.log(sankeyNodes);
+  console.log(sankeyLinks);
+
+  const tooltip = d3.select("#playground")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0)
+    .style("position", "absolute")
+.style("background-color", "white")
+.style("border", "1px solid #ccc")
+.style("padding", "6px 10px")
+.style("border-radius", "6px")
+.style("box-shadow", "0 2px 6px rgba(0, 0, 0, 0.2)")
+.style("visibility", "hidden")
+.style("font-size", "14px")
+
+    svg.append("g")
+        .selectAll("path")
+        .data(sankeyLinks)
+        .join("path")
+        .attr("d", d3.sankeyLinkHorizontal())
+        .attr("stroke-width", d => Math.max(1, d.width))
+        .attr("stroke", d => color(nodes[d.source.index].id))
+        .attr("fill", "none")
+        .attr("stroke-opacity", 0.5)
+        .attr("stroke-linecap", "butt")
+        .style("mix-blend-mode", "multiply")
+
+
+        .on("mouseover", (event, d) =>{
+            tooltip.style("visibility", "visible")
+                .html(`<b>${d.source.id}</b> - ${d.target.index}</b><br>Source: ${nodes[d.source.index].id}<br>Target: ${nodes[d.target.index].id}<br>Value: ${d.value}`);
+        })
+        .on("mousemove", (event, d) => {
+            tooltip
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", (event, d) => {
+            tooltip.style("visibility", "hidden");
+        });
+    /*svg.append("g")
+        .selectAll("rect")
+        .data(sankeyNodes)
+        .join("rect")
+        .attr("x", d => d.x0)
+        .attr("y", d => d.y0)
+        .attr("height", d => d.y1 - d.y0)
+        .attr("width", d => d.x1 - d.x0)
+        .attr("fill", d => color(nodes[d.index].id))
+        .attr("stroke", "#fff");*/
+
+
+
+
+
+        });
+console.log(sankeyLinks)
+  
+
+;
+
+
+
+
+
+
+
+ 
+    </script>
+
+</body>
+</html>
