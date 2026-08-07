@@ -1,0 +1,24 @@
+{
+   "name": "Products",
+      "children": [
+        {
+          "name": "Electronics",
+          "children": [
+            {"name": "Laptops", "value": 4000},
+            {"name": "Mobiles", "value": 5000},
+            {"name": "Accessories", "value": 1500}
+          ]
+        },
+        {
+          "name": "Home Appliances",
+          "children": [
+            {"name": "Refrigerators", "value": 300},
+            {"name": "W_Machines", "value": 2500},
+            {"name": "Ovens", "value": 1200}
+          ]
+        }
+      ]
+    }
+
+    
+

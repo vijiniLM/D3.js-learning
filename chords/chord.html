@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <title>Sales Treemap</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        span {
+            color: tomato;
+        }
+
+        #playground {
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Sales Treemap</h1>
+
+<div id="playground"></div>
+
+<script>
+
+// Hierarchical data: a parent has a children array; only leaf nodes need sales.
+const salesData = {
+    name: "Total Sales",
+    children: [
+        {
+            name: "North Region",
+            children: [
+                { name: "Laptops", sales: 42000 },
+                { name: "Phones", sales: 31000 },
+                { name: "Accessories", sales: 12000 }
+            ]
+        },
+        {
+            name: "South Region",
+            children: [
+                { name: "Laptops", sales: 35000 },
+                { name: "Phones", sales: 28000 },
+                { name: "Accessories", sales: 9000 }
+            ]
+        },
+        {
+            name: "Online Sales",
+            children: [
+                { name: "Laptops", sales: 50000 },
+                { name: "Phones", sales: 44000 },
+                { name: "Accessories", sales: 18000 }
+            ]
+        }
+    ]
+};
+
+// Load the nested data into D3's hierarchy structure.
+const root = d3.hierarchy(salesData)
+    .sum(d => d.sales || 0)
+    .sort((a, b) => b.value - a.value);
+
+// Check these in the browser DevTools console before drawing the treemap.
+console.log("Sales hierarchy root:", root);
+console.log("All hierarchy nodes:", root.descendants());
+console.log("Leaf products with sales:", root.leaves());
+
+   
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

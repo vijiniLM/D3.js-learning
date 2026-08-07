@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <title>tree map Chart</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        span {
+            color: tomato;
+        }
+
+        #playground {
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>D3 JS</h1>
+
+<div id="playground"></div>
+
+<script>
+// we can't use like in a circle diagrams which would start from the center
+
+d3.select("h1")
+    .append("span")
+    .text(" Playground");
+
+const width = 800;
+const height = 720;
+const margin = 50;
+
+// Create SVG
+const svg = d3.select("#playground")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .style("border", "1px solid black")
+    .style("border-radius", "12px")
+    .style("box-shadow", "5px 5px 15px rgba(0, 0, 0, 0.3)");
+
+const chartGroup = svg.append("g")
+    .attr("transform", `translate(${margin}, ${margin})`);
+
+const colors = d3.scaleOrdinal(d3.schemeSet2);
+
+d3.json("sales_hierarchy.json")
+    .then(function (data) {
+        const root = d3.hierarchy(data)
+            .sum(d => d.value || 0)
+            .sort((a, b) => b.value - a.value);
+
+        d3.treemap()
+            .size([width - 2 * margin, height - 2 * margin])
+            .padding(4)(root);
+
+        const nodes = chartGroup.selectAll("g")
+            .data(root.leaves())
+            .join("g")
+            .attr("transform", d => `translate(${d.x0}, ${d.y0})`);
+
+        nodes.append("rect")
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0)
+
+            //rooot node=products
+            //based on the parent node, we can color the leaf nodes////
+            .attr("fill", d => colors(d.parent.data.name))
+            .attr("stroke", "#fff");
+
+        nodes.append("text")
+            .attr("x", 5)
+            .attr("y", 15)
+            .text(d => d.data.name)
+            .attr("font-size", "11px")
+            .attr("fill", "#222");
+    })
+    .catch(function (error) {
+        console.error("Error loading dataset:", error);
+    });
+</script>
+    </body>
+    </html>
